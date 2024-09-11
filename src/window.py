@@ -10,7 +10,7 @@ class Window:
         #self.root.geometry(f"{height}x{width}")
         self.root.title("Maze Solver")
         self.canvas = Canvas(self.root, width=width, height=height)
-        self.canvas.pack()
+        self.canvas.pack(anchor='center')
         self.running = False
 
         # Connects the closing of the window "top left x" with the close mehtod

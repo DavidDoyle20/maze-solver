@@ -23,6 +23,8 @@ class Maze:
         self.cell_size_y = cell_size_y
         self.win = win
 
+        self.test = set()
+
         if seed: random.seed(seed)
         print("Starting Construction of Maze")
         self._cells = []
@@ -35,7 +37,7 @@ class Maze:
         self._break_walls_r(start_tuple[0], start_tuple[1])
         
         self._reset_cells_visited()
-        self._draw_cell()
+
 
 
     def _create_cells(self):
@@ -52,19 +54,21 @@ class Maze:
                 )
                 new_col.append(Cell(self.win, top_left, bottom_right))
             self._cells.append(new_col)
-        self._draw_cell()
+        self._draw_cells()
 
+    def _draw_cells(self):
+        for i in range(len(self._cells)):
+            for j in range(len(self._cells[i])):
+                self._draw_cell(i,j)
 
-    def _draw_cell(self):
-        for x in self._cells:
-            for cell in x:
-                cell.draw()
-                self._animate()
+    def _draw_cell(self, i, j):
+        self._cells[i][j].draw()
+        self._animate()
 
         
     def _animate(self):
         self.win.redraw()
-        time.sleep(0.05)
+        time.sleep(0.01)
 
     def _break_entrance_and_exit(self):
         if len(self._cells) == 0:
@@ -82,8 +86,9 @@ class Maze:
             entrance.draw()
 
     def _break_walls_r(self, i, j):
-        
+
         self._cells[i][j].visited = True
+
         while True:
             to_visit = []
             # Check the cells directly adjacent to the current cell and keep track of them
@@ -100,7 +105,7 @@ class Maze:
                 if self._cells[i+1][j].visited == False:
                     to_visit.append((i+1, j))
             if len(to_visit) == 0:
-                self._draw_cell()
+                self._draw_cell(i,j)
                 return
             else:
                 # (i,j)
@@ -143,10 +148,45 @@ class Maze:
         pass
     
     def solve(self):
+        print("Starting to solve")
         self._solve_r(0,0)
     
     # Returns true if the current cell is an end cell OR if it leads to the end cell
     def _solve_r(self, i, j):
-        pass
+        self._animate()
+        current = self._cells[i][j]
 
-            
+        current.visited = True
+        if i == len(self._cells)-1 and j == len(self._cells[i])-1:
+            return True
+
+        # Check left
+        if self._is_valid_pos(i, j-1) and not current.has_left_wall and not self._cells[i][j-1].visited:
+            current.draw_move(self._cells[i][j-1])
+            if self._solve_r(i, j-1):
+                return True
+            else:
+                current.draw_move(self._cells[i][j-1], True)
+        # Check right
+        if self._is_valid_pos(i, j+1) and not current.has_right_wall and not self._cells[i][j+1].visited:
+            current.draw_move(self._cells[i][j+1])
+            if self._solve_r(i, j+1):
+                return True
+            else:
+                current.draw_move(self._cells[i][j+1], True)
+        # Check top
+        if self._is_valid_pos(i-1, j) and not current.has_top_wall and not self._cells[i-1][j].visited:
+            current.draw_move(self._cells[i-1][j])
+            if self._solve_r(i-1, j):
+                return True
+            else:
+                current.draw_move(self._cells[i-1][j], True)
+        # Check bottome
+        if self._is_valid_pos(i+1, j) and not current.has_bottom_wall and not self._cells[i+1][j].visited:
+            current.draw_move(self._cells[i+1][j])
+            if self._solve_r(i+1, j):
+                return True
+            else:
+                current.draw_move(self._cells[i+1][j], True)
+        else:
+            return False

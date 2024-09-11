@@ -10,7 +10,7 @@ def main():
     p3 = Point(101, 50)
     p4 = Point(151, 100)
     line = Line(p1, p2)
-    win = Window(800, 800)
+    win = Window(1000, 1000)
     cell = Cell(win, p1, p2, True, True, True, True)
     cell2 = Cell(win, p3, p4)
 
@@ -19,7 +19,8 @@ def main():
 
     #cell.draw_move(cell2, True)
 
-    maze = Maze(2, 2, 16, 16, 25, 25, win)
+    maze = Maze(2, 2, 32, 32, 25, 25, win)
+    maze.solve()
 
     #win.draw_line(line, "red")
 

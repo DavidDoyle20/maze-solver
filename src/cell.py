@@ -62,7 +62,6 @@ class Cell:
             Point(self._x1, self._y2) , Point(self._x2, self._y2)
         )
         line.draw(self._win.canvas, color)
-        #time.sleep(0.1)
 
 
     # If undo is false line should be red, gray otherwise    
